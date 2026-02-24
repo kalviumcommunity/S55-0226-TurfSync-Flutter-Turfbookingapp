@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper functions ─────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserRole() == 'admin';
+    }
+
+    function isCoach() {
+      return isSignedIn() && getUserRole() == 'coach';
+    }
+
+    // ─── Users ────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // Anyone signed in can read user profiles.
+      allow read: if isSignedIn();
+
+      // Users can create their own profile during registration.
+      allow create: if isOwner(userId);
+
+      // Users can update only their own profile.
+      allow update: if isOwner(userId);
+
+      // Only admins can delete user profiles.
+      allow delete: if isAdmin();
+    }
+
+    // ─── Turfs ────────────────────────────────────────────────────────
+    match /turfs/{turfId} {
+      // Anyone signed in can read turfs.
+      allow read: if isSignedIn();
+
+      // Only admins can create, update, or delete turfs.
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── Bookings ─────────────────────────────────────────────────────
+    match /bookings/{bookingId} {
+      // Admins can read all bookings.
+      // Users can read their own bookings.
+      allow read: if isAdmin()
+                  || resource.data.userId == request.auth.uid;
+
+      // Any signed‑in user can create a booking (for themselves).
+      allow create: if isSignedIn()
+                    && request.resource.data.userId == request.auth.uid;
+
+      // Admins can update bookings (approve / reject).
+      // Booking owner can cancel (update status to 'cancelled').
+      allow update: if isAdmin()
+                    || (isOwner(resource.data.userId)
+                        && request.resource.data.status == 'cancelled');
+
+      // Only admins can delete bookings.
+      allow delete: if isAdmin();
+    }
+
+    // ─── Booked Slots (double-booking prevention) ─────────────────────
+    match /bookedSlots/{slotId} {
+      // Anyone signed in can read (needed to display availability).
+      allow read: if isSignedIn();
+
+      // Only server-side transactions should create / delete these.
+      // We allow create if user is signed in (transaction runs client-side
+      // but with auth context). The composite key ensures uniqueness.
+      allow create: if isSignedIn();
+
+      // Admins or booking owner can delete (cancel / reject flow).
+      allow delete: if isAdmin()
+                    || resource.data.userId == request.auth.uid;
+
+      // No direct updates – delete + recreate if needed.
+      allow update: if false;
+    }
+
+    // ─── Practice Sessions ────────────────────────────────────────────
+    match /sessions/{sessionId} {
+      // Anyone signed in can read sessions.
+      allow read: if isSignedIn();
+
+      // Coaches and admins can create sessions.
+      allow create: if isCoach() || isAdmin();
+
+      // Coach who created the session or admin can update.
+      allow update: if isAdmin()
+                    || (isCoach() && resource.data.coachId == request.auth.uid)
+                    || isSignedIn(); // players join/leave via array update
+
+      // Coach who created or admin can delete.
+      allow delete: if isAdmin()
+                    || (isCoach() && resource.data.coachId == request.auth.uid);
+    }
+  }
+}
