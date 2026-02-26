@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39005807333",
+    "project_id": "bookmyturf-59d1f",
+    "storage_bucket": "bookmyturf-59d1f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39005807333:android:418c98dbdc185451fc2a0c",
+        "android_client_info": {
+          "package_name": "com.example.bookmyturf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5sv9z8C14feT1aRBFGE8OlC5aeLbBGuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

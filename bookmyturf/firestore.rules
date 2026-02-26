@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users: Can only read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Turfs: Anyone authenticated can read, only admins write
+    match /turfs/{turfId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Seeded programmatically on first load
+    }
+
+    // Bookings: Authenticated users can read all (community visibility)
+    // Users can only create/cancel their own bookings
+    match /bookings/{bookingId} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'confirmed';
+
+      allow update: if request.auth != null
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.userId == resource.data.userId; // can't change owner
+
+      allow delete: if false; // Soft-delete only via status field
+    }
+  }
+}
