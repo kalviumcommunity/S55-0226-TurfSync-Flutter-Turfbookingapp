@@ -1,0 +1,40 @@
+name: bookmyturf
+description: Smart turf booking app to prevent scheduling conflicts for community sports groups.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^2.27.0
+  firebase_auth: ^4.17.5
+  cloud_firestore: ^4.15.5
+  firebase_storage: ^11.6.9
+
+  # State Management
+  provider: ^6.1.2
+
+  # UI & Utils
+  cupertino_icons: ^1.0.6
+  intl: ^0.19.0
+  google_fonts: ^6.2.1
+  table_calendar: ^3.1.2
+  flutter_animate: ^4.5.0
+  lottie: ^3.1.2
+  shared_preferences: ^2.2.3
+  uuid: ^4.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
