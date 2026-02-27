@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import '../../models/booking_model.dart';
 import '../../services/auth_service.dart';
 import '../../services/booking_service.dart';
