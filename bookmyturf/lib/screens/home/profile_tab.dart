@@ -118,7 +118,7 @@ class ProfileTab extends StatelessWidget {
                   ? auth.teamName!
                   : 'No team set',
             ),
-            _InfoTile(
+            const _InfoTile(
               icon: Icons.sports_soccer_outlined,
               title: 'Sports',
               subtitle: 'Football, Cricket, Futsal',

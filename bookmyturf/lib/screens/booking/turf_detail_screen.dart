@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../models/booking_model.dart';
 import '../../theme.dart';
 import 'booking_form_screen.dart';

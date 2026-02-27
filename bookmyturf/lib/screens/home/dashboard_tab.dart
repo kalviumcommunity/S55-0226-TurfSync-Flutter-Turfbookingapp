@@ -6,8 +6,7 @@ import '../../services/auth_service.dart';
 import '../../services/booking_service.dart';
 import '../../theme.dart';
 import '../../widgets/booking_card.dart';
-import '../booking/booking_form_screen.dart';
-import 'turfs_tab.dart';
+import 'home_screen.dart';
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -66,7 +65,14 @@ class DashboardTab extends StatelessWidget {
                               child: IconButton(
                                 icon: const Icon(Icons.notifications_outlined,
                                     color: Colors.white),
-                                onPressed: () {},
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('No new notifications'),
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -155,7 +161,15 @@ class DashboardTab extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  // Navigate to Turfs tab
+                                  final scaffold = Scaffold.of(context);
+                                  final homeState =
+                                      context.findAncestorStateOfType<
+                                          HomeScreenState>();
+                                  if (homeState != null) {
+                                    homeState.setState(() {
+                                      homeState.currentIndex = 1;
+                                    });
+                                  }
                                 },
                                 child: const Text('Browse Turfs'),
                               ),
@@ -220,7 +234,9 @@ class DashboardTab extends StatelessWidget {
 
                   // Real-time bookings stream
                   StreamBuilder<List<TurfBooking>>(
-                    stream: context.read<BookingService>().streamAllUpcomingBookings(),
+                    stream: context
+                        .read<BookingService>()
+                        .streamAllUpcomingBookings(),
                     builder: (ctx, snap) {
                       if (snap.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -239,8 +255,8 @@ class DashboardTab extends StatelessWidget {
                         shrinkWrap: true,
                         itemCount: bookings.take(5).length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (_, i) =>
-                            BookingCard(booking: bookings[i], showCancelButton: false),
+                        itemBuilder: (_, i) => BookingCard(
+                            booking: bookings[i], showCancelButton: false),
                       );
                     },
                   ),

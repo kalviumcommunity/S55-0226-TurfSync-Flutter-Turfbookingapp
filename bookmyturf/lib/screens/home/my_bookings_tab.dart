@@ -87,7 +87,7 @@ class MyBookingsTab extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
               if (past.isNotEmpty) ...[
-                _SectionHeader(title: 'Past & Cancelled'),
+                const _SectionHeader(title: 'Past & Cancelled'),
                 const SizedBox(height: 8),
                 ...past.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: 10),

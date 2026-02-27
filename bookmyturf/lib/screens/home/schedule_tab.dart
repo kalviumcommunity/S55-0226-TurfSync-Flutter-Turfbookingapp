@@ -49,7 +49,8 @@ class _ScheduleTabState extends State<ScheduleTab> {
                           selected: _selectedTurfId == null,
                           onSelected: (_) =>
                               setState(() => _selectedTurfId = null),
-                          selectedColor: AppTheme.primaryGreen.withOpacity(0.15),
+                          selectedColor:
+                              AppTheme.primaryGreen.withOpacity(0.15),
                           checkmarkColor: AppTheme.primaryGreen,
                         ),
                       );
@@ -106,10 +107,10 @@ class _ScheduleTabState extends State<ScheduleTab> {
                 ),
                 weekendTextStyle: TextStyle(color: Colors.redAccent),
               ),
-              headerStyle: HeaderStyle(
+              headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
-                titleTextStyle: const TextStyle(
+                titleTextStyle: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
                   color: AppTheme.darkGreen,
@@ -123,7 +124,7 @@ class _ScheduleTabState extends State<ScheduleTab> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded,
+                const Icon(Icons.calendar_today_rounded,
                     size: 16, color: AppTheme.primaryGreen),
                 const SizedBox(width: 8),
                 Text(
@@ -169,14 +170,18 @@ class _BookingsForDay extends StatelessWidget {
       );
     }
 
-    // Show for all turfs
+// Show for all turfs
     return StreamBuilder<List<TurfBooking>>(
       stream: bookingSvc.streamAllUpcomingBookings(),
       builder: (_, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final allBookings = (snap.data ?? []).where((b) {
           return b.date.year == date.year &&
               b.date.month == date.month &&
-              b.date.day == date.day;
+              b.date.day == date.day &&
+              b.status != BookingStatus.cancelled;
         }).toList();
         return _BookingList(bookings: allBookings);
       },
@@ -203,7 +208,7 @@ class _BookingList extends StatelessWidget {
               style: TextStyle(color: Colors.grey[600]),
             ),
             const SizedBox(height: 6),
-            Text(
+            const Text(
               'Turf is available for booking!',
               style: TextStyle(
                   color: AppTheme.primaryGreen, fontWeight: FontWeight.w500),
@@ -216,11 +221,10 @@ class _BookingList extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
       itemCount: bookings.length,
-      itemBuilder: (_, i) =>
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: BookingCard(booking: bookings[i], showCancelButton: false),
-          ),
+      itemBuilder: (_, i) => Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: BookingCard(booking: bookings[i], showCancelButton: false),
+      ),
     );
   }
 }

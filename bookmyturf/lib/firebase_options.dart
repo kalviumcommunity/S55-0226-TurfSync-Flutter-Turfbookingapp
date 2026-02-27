@@ -10,10 +10,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,6 +25,17 @@ class DefaultFirebaseOptions {
   }
 
   // ⚠️ REPLACE THESE WITH YOUR ACTUAL VALUES FROM FIREBASE CONSOLE
+
+  // Web configuration – uses the same project.
+  // If you registered a separate web app in Firebase Console, update appId & apiKey.
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyD5sv9z8C14feT1aRBFGE8OlC5aeLbBGuE',
+    appId: '1:39005807333:web:418c98dbdc185451fc2a0c',
+    messagingSenderId: '39005807333',
+    projectId: 'bookmyturf-59d1f',
+    storageBucket: 'bookmyturf-59d1f.firebasestorage.app',
+    authDomain: 'bookmyturf-59d1f.firebaseapp.com',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD5sv9z8C14feT1aRBFGE8OlC5aeLbBGuE',
